@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VkNet.Enums.Filters;
+using VkNet.Model.RequestParams;
 
 namespace Bike18InVK
 {
@@ -42,7 +43,7 @@ namespace Bike18InVK
             CookieContainer cookieVk = new CookieContainer();
             var vk = new VkNet.VkApi();
             var idVkProgram = 5464980;
-            Settings scope = Settings.Friends;
+            Settings scope = Settings.All;
             vk.Authorize(new VkNet.ApiAuthParams
             {
                 ApplicationId = (ulong)idVkProgram,
@@ -50,6 +51,31 @@ namespace Bike18InVK
                 Password = tbVkPass.Text,
                 Settings = scope
             });
+
+            // Получить адрес сервера для загрузки.
+            var uploadServer = vk.Photo.GetMarketUploadServer(63895737, true, 5, 5, 600);
+            // Загрузить фотографию.
+            var wc = new WebClient();
+            var responseImg = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, "s2-012_3.jpg"));
+            // Сохранить загруженную фотографию
+            var photo = vk.Photo.SaveMarketPhoto(63895737, responseImg);
+            var tovar = vk.Markets.Add(new MarketProductParams
+            {
+                OwnerId = -63895737,
+                CategoryId = 401,
+                MainPhotoId = photo.FirstOrDefault().Id.Value,
+                Deleted = false,
+                Name = "Телефон",
+                Description = "Описание товара",
+                Price = 10000
+            });
+
+            ///id подборки товара
+            List<long> lon = new List<long>();
+            lon.Add(37);
+            IEnumerable<long> albums = (IEnumerable<long>)lon;
+
+            var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
         }
 
         private void Form1_Load(object sender, EventArgs e)
