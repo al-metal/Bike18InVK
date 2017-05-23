@@ -45,3 +45,10 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*/VkNet.1.29.1/*
+*/bin/*
+*/obj/*
+*/Newtonsoft.Json.9.0.1/*
+*/AngleSharp.0.9.9/*
+Bike18InVK/nethouse.cs
+Bike18InVK/httpRequest.cs
