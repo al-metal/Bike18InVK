@@ -67,23 +67,31 @@ namespace Bike18InVK
                 string urlBike18Tovar = str.ToString();
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
                 articl = product[6].ToString();
+                string nameProduct = product[4].ToString();
+                string descriptionProduct = product[8].ToString();
+                MatchCollection tagsDescription = new Regex("<.*?>").Matches(descriptionProduct);
+                foreach(Match s in tagsDescription)
+                {
+                    string tag = s.ToString();
+                    descriptionProduct = descriptionProduct.Replace(tag, " ");
+                }
+                string tehnichHarak = new Regex("ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ.*").Match(descriptionProduct).ToString();
+                descriptionProduct = descriptionProduct.Replace(tehnichHarak, " ");
                 SaveAllImages(product[44].ToString(), articl);
+                int price = Convert.ToInt32(product[9].ToString());
 
-                AddInVK(vk, articl);
+
+                AddInVK(vk, articl, nameProduct, descriptionProduct, price);
             }
             
             
         }
-
-        private void AddInVK(VkApi vk, string articl)
+        private void AddInVK(VkApi vk, string articl, string nameProduct, string descriptionProduct, int price)
         {
             // Получить адрес сервера для загрузки.
-            var uploadServer = vk.Photo.GetMarketUploadServer(63895737, true, 5, 5, 600);
+            var uploadServer = vk.Photo.GetMarketUploadServer(63895737, true, 1, 1, 200);
             // Загрузить фотографию.
             var wc = new WebClient();
-            var responseImg = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, "s2-012_3.jpg"));
-            // Сохранить загруженную фотографию
-            var photo = vk.Photo.SaveMarketPhoto(63895737, responseImg);
 
             long firstPhoto = 0;
             List<long> photos = new List<long>();
@@ -95,9 +103,9 @@ namespace Bike18InVK
                     Thread.Sleep(5000);
                     // Загрузить фотографию.
                     wc = new WebClient();
-                    responseImg = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, nameImage));
+                    var responseImg = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, nameImage));
                     // Сохранить загруженную фотографию
-                    photo = vk.Photo.SaveMarketPhoto(63895737, responseImg);
+                    var photo = vk.Photo.SaveMarketPhoto(63895737, responseImg);
                     if (i == 0)
                     {
                         firstPhoto = photo[0].Id.Value;
@@ -115,9 +123,9 @@ namespace Bike18InVK
                 CategoryId = 401,
                 MainPhotoId = firstPhoto,
                 Deleted = false,
-                Name = "Телефон",
-                Description = "Описание товара",
-                Price = 10000,
+                Name = nameProduct,
+                Description = descriptionProduct,
+                Price = price,
                 PhotoIds = photosArray
             });
 
