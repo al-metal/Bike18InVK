@@ -66,28 +66,52 @@ namespace Bike18InVK
             {
                 string urlBike18Tovar = str.ToString();
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
+                string description = ReturnDescriptionProduct(product[7].ToString(), product[8].ToString(), urlBike18Tovar);
                 articl = product[6].ToString();
                 articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
-                string descriptionProduct = product[8].ToString();
-                MatchCollection tagsDescription = new Regex("<.*?>").Matches(descriptionProduct);
-                foreach(Match s in tagsDescription)
-                {
-                    string tag = s.ToString();
-                    descriptionProduct = descriptionProduct.Replace(tag, " ");
-                }
-                string tehnichHarak = new Regex("ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ.*").Match(descriptionProduct).ToString();
-                if(tehnichHarak != "")
-                    descriptionProduct = descriptionProduct.Replace(tehnichHarak, " ");
+               
+                
                 SaveAllImages(product[44].ToString(), articl);
                 int price = Convert.ToInt32(product[9].ToString());
 
 
-                AddInVK(vk, articl, nameProduct, descriptionProduct, price);
+                AddInVK(vk, articl, nameProduct, description, price);
             }
             
             
         }
+
+        private string ReturnDescriptionProduct(string miniText, string fullText, string urlProduct)
+        {
+            string text = "";
+            MatchCollection tagsDescription = new Regex("<.*?>").Matches(miniText);
+            foreach (Match s in tagsDescription)
+            {
+                string tag = s.ToString();
+                miniText = miniText.Replace(tag, " ");
+            }
+            string rassrochkaBike18 = new Regex("\\+.*").Match(miniText).ToString();
+            if(rassrochkaBike18 != "")
+            miniText = miniText.Replace(rassrochkaBike18, "");
+            string vkGroup = new Regex("Вступай в нашу группу  .*").Match(miniText).ToString();
+            if (rassrochkaBike18 != "")
+                miniText = miniText.Replace(vkGroup, "");
+
+            tagsDescription = new Regex("<.*?>").Matches(fullText);
+            foreach (Match s in tagsDescription)
+            {
+                string tag = s.ToString();
+                fullText = fullText.Replace(tag, " ");
+            }
+
+            string tehnichHarak = new Regex("ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ.*").Match(fullText).ToString();
+            if (tehnichHarak != "")
+                fullText = fullText.Replace(tehnichHarak, " ");
+            text = miniText + "\r\n" + fullText;
+            return text;
+        }
+
         private void AddInVK(VkApi vk, string articl, string nameProduct, string descriptionProduct, int price)
         {
             // Получить адрес сервера для загрузки.
