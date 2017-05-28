@@ -67,6 +67,7 @@ namespace Bike18InVK
                 string urlBike18Tovar = str.ToString();
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
                 articl = product[6].ToString();
+                articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
                 string descriptionProduct = product[8].ToString();
                 MatchCollection tagsDescription = new Regex("<.*?>").Matches(descriptionProduct);
@@ -76,7 +77,8 @@ namespace Bike18InVK
                     descriptionProduct = descriptionProduct.Replace(tag, " ");
                 }
                 string tehnichHarak = new Regex("ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ.*").Match(descriptionProduct).ToString();
-                descriptionProduct = descriptionProduct.Replace(tehnichHarak, " ");
+                if(tehnichHarak != "")
+                    descriptionProduct = descriptionProduct.Replace(tehnichHarak, " ");
                 SaveAllImages(product[44].ToString(), articl);
                 int price = Convert.ToInt32(product[9].ToString());
 
@@ -89,7 +91,7 @@ namespace Bike18InVK
         private void AddInVK(VkApi vk, string articl, string nameProduct, string descriptionProduct, int price)
         {
             // Получить адрес сервера для загрузки.
-            var uploadServer = vk.Photo.GetMarketUploadServer(63895737, true, 1, 1, 200);
+            var uploadServer = vk.Photo.GetMarketUploadServer(63895737, true, 1, 1, 400);
             // Загрузить фотографию.
             var wc = new WebClient();
 
@@ -161,11 +163,21 @@ namespace Bike18InVK
                 webClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
                 try
                 {
-                    webClient.DownloadFile("http://" + url, "pic\\" + articl + "_" + i + ".jpg");
+                    url = "http://" + url;
+                    webClient.DownloadFile(url, "pic\\" + articl + "_" + i + ".jpg");
+                    System.Drawing.Image objImage = System.Drawing.Image.FromFile("pic\\" + articl + "_" + i + ".jpg");
+                    int lbl_ImageWidth = objImage.Width;
+                    int lbl_ImageHeight = objImage.Height;
+                    objImage.Dispose();
+                    if (lbl_ImageHeight < 400 || lbl_ImageWidth < 400)
+                    {
+                        File.Delete("pic\\" + articl + "_" + i + ".jpg");
+                        i--;
+                    }                    
                 }
                 catch
                 {
-
+                    i--;
                 }
                 i++;
             }
