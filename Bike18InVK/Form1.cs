@@ -95,7 +95,7 @@ namespace Bike18InVK
             if(rassrochkaBike18 != "")
             miniText = miniText.Replace(rassrochkaBike18, "");
             string vkGroup = new Regex("Вступай в нашу группу  .*").Match(miniText).ToString();
-            if (rassrochkaBike18 != "")
+            if (vkGroup != "")
                 miniText = miniText.Replace(vkGroup, "");
 
             tagsDescription = new Regex("<.*?>").Matches(fullText);
@@ -109,6 +109,13 @@ namespace Bike18InVK
             if (tehnichHarak != "")
                 fullText = fullText.Replace(tehnichHarak, " ");
             text = miniText + "\r\n" + fullText;
+            MatchCollection ampers = new Regex("&.*;").Matches(text);
+            if(ampers.Count != 0)
+                foreach(Match s in ampers)
+                {
+                    string str = s.ToString();
+                    text = text.Replace(str, "");
+                }
             return text;
         }
 
