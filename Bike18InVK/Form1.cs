@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using VkNet.Enums.Filters;
 using VkNet.Model.RequestParams;
 using VkNet;
+using System.Drawing.Drawing2D;
 
 namespace Bike18InVK
 {
@@ -194,17 +195,48 @@ namespace Bike18InVK
                 webClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
                 try
                 {
-                    url = "http://" + url;
-                    webClient.DownloadFile(url, "pic\\" + articl + "_" + i + ".jpg");
-                    System.Drawing.Image objImage = System.Drawing.Image.FromFile("pic\\" + articl + "_" + i + ".jpg");
+                    
+                    url = "http:/" + url;
+                    webClient.DownloadFile(url, "pic\\test.jpg");
+                    
+                    System.Drawing.Image objImage = System.Drawing.Image.FromFile("pic\\test.jpg");
                     int lbl_ImageWidth = objImage.Width;
                     int lbl_ImageHeight = objImage.Height;
+                    int nHeight = 400;
+                    int nWidth = 400;
                     objImage.Dispose();
                     if (lbl_ImageHeight < 400 || lbl_ImageWidth < 400)
                     {
-                        File.Delete("pic\\" + articl + "_" + i + ".jpg");
+                        File.Delete("pic\\test1.jpg");
                         i--;
-                    }                    
+                    }
+                    Image image = Image.FromFile("pic\\test.jpg");
+                    int newWidth;
+                    int newHeight;
+                    int newSizeImage;
+                    var coefH = (double)nHeight / (double)image.Height;
+                    var coefW = (double)nWidth / (double)image.Width;
+                    if (coefW <= coefH)
+                    {
+                        newHeight = (int)(image.Height * coefH);
+                        newWidth = (int)(image.Width * coefH);
+                        
+                        newSizeImage = newHeight;
+                    }
+                    else
+                    {
+                        newHeight = (int)(image.Height * coefW);
+                        newWidth = (int)(image.Width * coefW);
+                        
+                        newSizeImage = newWidth;
+                    }
+
+                    Bitmap bmp = new Bitmap(image, newWidth, newHeight);
+                    bmp.Save("pic\\" + articl + "_" + i + ".jpg");
+                    bmp.Dispose();
+                    image.Dispose();
+
+                    File.Delete("pic\\test.jpg");
                 }
                 catch
                 {
