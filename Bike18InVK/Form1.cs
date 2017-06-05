@@ -67,7 +67,7 @@ namespace Bike18InVK
             {
                 string urlBike18Tovar = str.ToString();
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
-                string description = ReturnDescriptionProduct(product[7].ToString(), product[8].ToString(), urlBike18Tovar);
+                string description = ReturnDescriptionProduct(product[4].ToString(), product[7].ToString(), product[8].ToString(), urlBike18Tovar);
                 articl = product[6].ToString();
                 articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
@@ -83,9 +83,10 @@ namespace Bike18InVK
             
         }
 
-        private string ReturnDescriptionProduct(string miniText, string fullText, string urlProduct)
+        private string ReturnDescriptionProduct(string nameTovar, string miniText, string fullText, string urlProduct)
         {
             string text = "";
+            text = nameTovar + "\r\n\r\n";
             MatchCollection tagsDescription = new Regex("<.*?>").Matches(miniText);
             foreach (Match s in tagsDescription)
             {
@@ -99,17 +100,25 @@ namespace Bike18InVK
             if (vkGroup != "")
                 miniText = miniText.Replace(vkGroup, "");
 
+            text = text + miniText + "\r\n\r\n";
+
             tagsDescription = new Regex("<.*?>").Matches(fullText);
             foreach (Match s in tagsDescription)
             {
                 string tag = s.ToString();
+                if(tag.Contains("<td "))
+                    fullText = fullText.Replace(tag, "\r\n");
+                else
                 fullText = fullText.Replace(tag, " ");
             }
 
-            string tehnichHarak = new Regex("ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ.*").Match(fullText).ToString();
+            string tehnichHarak = new Regex(".*?(?=ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ )").Match(fullText).ToString();
             if (tehnichHarak != "")
-                fullText = fullText.Replace(tehnichHarak, " ");
-            text = miniText + "\r\n" + fullText;
+                fullText = fullText.Replace(tehnichHarak, "");
+            string consult = new Regex("Если Вы хотите получить консультацию.*").Match(fullText).ToString();
+            if (consult != "")
+                fullText = fullText.Replace(consult, "");
+            text = text + fullText;
             MatchCollection ampers = new Regex("&.*;").Matches(text);
             if(ampers.Count != 0)
                 foreach(Match s in ampers)
@@ -117,6 +126,9 @@ namespace Bike18InVK
                     string str = s.ToString();
                     text = text.Replace(str, "");
                 }
+
+            text = text + "\r\n\r\n" + "Подробнее смотри на нашем сайте\r\n" + urlProduct;
+
             return text;
         }
 
@@ -165,7 +177,7 @@ namespace Bike18InVK
 
             ///id подборки товара
             List<long> lon = new List<long>();
-            lon.Add(37);
+            lon.Add(38);
             IEnumerable<long> albums = (IEnumerable<long>)lon;
 
             var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
