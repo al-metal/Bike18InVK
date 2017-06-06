@@ -41,7 +41,7 @@ namespace Bike18InVK
             CookieContainer cookieNethouse = new CookieContainer();
             cookieNethouse = nethouse.CookieNethouse(tbNethouseLogin.Text, tbNethousePass.Text);
 
-            if(cookieNethouse.Count != 4)
+            if (cookieNethouse.Count != 4)
             {
                 MessageBox.Show("Логин/пароль не верный");
                 return;
@@ -58,7 +58,7 @@ namespace Bike18InVK
                 Settings = scope
             });
 
-            string otv = http.getRequest("https://bike18.ru/products/category/pitbayki?page=all");
+            string otv = http.getRequest("https://bike18.ru/products/category/detskie-kvadrocikly?page=all");
             MatchCollection bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
 
             string articl = "";
@@ -66,13 +66,17 @@ namespace Bike18InVK
             foreach (Match str in bike18Tovar)
             {
                 string urlBike18Tovar = str.ToString();
+
+                //if (urlBike18Tovar != "https://bike18.ru/products/pitbayk-kayo-classic-yx170-17-14-krz-2017-g")
+                //    continue;
+
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
                 string description = ReturnDescriptionProduct(product[7].ToString(), product[8].ToString(), urlBike18Tovar);
                 articl = product[6].ToString();
                 articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
-               
-                
+
+
                 SaveAllImages(product[44].ToString(), articl);
                 int price = Convert.ToInt32(product[9].ToString());
 
@@ -92,8 +96,8 @@ namespace Bike18InVK
                 miniText = miniText.Replace(tag, " ");
             }
             string rassrochkaBike18 = new Regex("\\+.*").Match(miniText).ToString();
-            if(rassrochkaBike18 != "")
-            miniText = miniText.Replace(rassrochkaBike18, "");
+            if (rassrochkaBike18 != "")
+                miniText = miniText.Replace(rassrochkaBike18, "");
             string vkGroup = new Regex("Вступай в нашу группу  .*").Match(miniText).ToString();
             if (vkGroup != "")
                 miniText = miniText.Replace(vkGroup, "");
@@ -104,10 +108,10 @@ namespace Bike18InVK
             foreach (Match s in tagsDescription)
             {
                 string tag = s.ToString();
-                if(tag.Contains("<td "))
+                if (tag.Contains("<td") || tag.Contains("<li>"))
                     fullText = fullText.Replace(tag, "\r\n");
                 else
-                fullText = fullText.Replace(tag, " ");
+                    fullText = fullText.Replace(tag, " ");
             }
 
             string tehnichHarak = new Regex(".*?(?=ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ )").Match(fullText).ToString();
@@ -116,10 +120,10 @@ namespace Bike18InVK
             string consult = new Regex("Если Вы хотите получить консультацию.*").Match(fullText).ToString();
             if (consult != "")
                 fullText = fullText.Replace(consult, "");
-            text = text + fullText;
+            text = text + "\r\n\r\n" + fullText;
             MatchCollection ampers = new Regex("&.*;").Matches(text);
-            if(ampers.Count != 0)
-                foreach(Match s in ampers)
+            if (ampers.Count != 0)
+                foreach (Match s in ampers)
                 {
                     string str = s.ToString();
                     text = text.Replace(str, "");
@@ -173,7 +177,7 @@ namespace Bike18InVK
 
             ///id подборки товара
             List<long> lon = new List<long>();
-            lon.Add(38);
+            lon.Add(39);
             IEnumerable<long> albums = (IEnumerable<long>)lon;
 
             var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
@@ -203,21 +207,19 @@ namespace Bike18InVK
                 webClient.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
                 try
                 {
-                    
-                    url = "http:/" + url;
+
+                    if (url.Contains("siteapi"))
+                        url = "http:/" + url;
+                    else
+                        url = "https://bike18.ru" + url;
                     webClient.DownloadFile(url, "pic\\test.jpg");
-                    
+
                     System.Drawing.Image objImage = System.Drawing.Image.FromFile("pic\\test.jpg");
                     int lbl_ImageWidth = objImage.Width;
                     int lbl_ImageHeight = objImage.Height;
                     int nHeight = 400;
                     int nWidth = 400;
                     objImage.Dispose();
-                    if (lbl_ImageHeight < 400 || lbl_ImageWidth < 400)
-                    {
-                        File.Delete("pic\\test1.jpg");
-                        i--;
-                    }
                     Image image = Image.FromFile("pic\\test.jpg");
                     int newWidth;
                     int newHeight;
@@ -228,14 +230,17 @@ namespace Bike18InVK
                     {
                         newHeight = (int)(image.Height * coefH);
                         newWidth = (int)(image.Width * coefH);
-                        
+
+                        if (newHeight < 400)
+                            newHeight = 400;
+
                         newSizeImage = newHeight;
                     }
                     else
                     {
                         newHeight = (int)(image.Height * coefW);
                         newWidth = (int)(image.Width * coefW);
-                        
+
                         newSizeImage = newWidth;
                     }
 
