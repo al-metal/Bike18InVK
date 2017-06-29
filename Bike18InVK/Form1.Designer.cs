@@ -93,9 +93,9 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(12, 120);
+            this.btnStart.Location = new System.Drawing.Point(18, 120);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(219, 23);
+            this.btnStart.Size = new System.Drawing.Size(206, 23);
             this.btnStart.TabIndex = 6;
             this.btnStart.Text = "Начать перенос";
             this.btnStart.UseVisualStyleBackColor = true;

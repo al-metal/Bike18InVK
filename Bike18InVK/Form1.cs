@@ -58,17 +58,37 @@ namespace Bike18InVK
                 Settings = scope
             });
 
-            string otv = http.getRequest("https://bike18.ru/products/category/detskie-kvadrocikly?page=all");
+            string otv = http.getRequest("https://bike18.ru/products/category/motobuksirovshchiki");
             MatchCollection bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
+            MatchCollection bike18Category = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
 
-            string articl = "";
+            if(bike18Tovar.Count != 0)
+            {
+                UploadTovar(vk, cookieNethouse, bike18Tovar);
+            }
+            else
+            {
+                foreach(Match s in bike18Category)
+                {
+                    string categoryUrl = s.ToString();
+                    otv = http.getRequest("https://bike18.ru" + categoryUrl + "?page=all");
+                    bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
 
+                    UploadTovar(vk, cookieNethouse, bike18Tovar);
+                }
+            }            
+        }
+
+        private void UploadTovar(VkApi vk, CookieContainer cookieNethouse, MatchCollection bike18Tovar)
+        {
             foreach (Match str in bike18Tovar)
             {
                 string urlBike18Tovar = str.ToString();
+                string articl = "";
 
-                //if (urlBike18Tovar != "https://bike18.ru/products/pitbayk-kayo-classic-yx170-17-14-krz-2017-g")
+                //if (urlBike18Tovar != "https://bike18.ru/products/kvadrocikl-detskiy-fusim-dragon-50-krasnyy")
                 //    continue;
+                //continue;
 
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
                 string description = ReturnDescriptionProduct(product[7].ToString(), product[8].ToString(), urlBike18Tovar);
@@ -76,10 +96,8 @@ namespace Bike18InVK
                 articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
 
-
                 SaveAllImages(product[44].ToString(), articl);
                 int price = Convert.ToInt32(product[9].ToString());
-
 
                 AddInVK(vk, articl, nameProduct, description, price);
             }
@@ -177,7 +195,7 @@ namespace Bike18InVK
 
             ///id подборки товара
             List<long> lon = new List<long>();
-            lon.Add(39);
+            lon.Add(40);
             IEnumerable<long> albums = (IEnumerable<long>)lon;
 
             var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
@@ -231,9 +249,6 @@ namespace Bike18InVK
                         newHeight = (int)(image.Height * coefH);
                         newWidth = (int)(image.Width * coefH);
 
-                        if (newHeight < 400)
-                            newHeight = 400;
-
                         newSizeImage = newHeight;
                     }
                     else
@@ -243,6 +258,12 @@ namespace Bike18InVK
 
                         newSizeImage = newWidth;
                     }
+
+                    if (newHeight < 400)
+                        newHeight = 400;
+                    if (newWidth < 400)
+                        newWidth = 400;
+
 
                     Bitmap bmp = new Bitmap(image, newWidth, newHeight);
                     bmp.Save("pic\\" + articl + "_" + i + ".jpg");
