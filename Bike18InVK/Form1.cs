@@ -1,28 +1,23 @@
-﻿using Bike18;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VkNet.Enums.Filters;
 using VkNet.Model.RequestParams;
 using VkNet;
-using System.Drawing.Drawing2D;
+using NehouseLibrary;
+using xNet.Net;
 
 namespace Bike18InVK
 {
     public partial class Form1 : Form
     {
         nethouse nethouse = new nethouse();
-        httpRequest http = new httpRequest();
         WebClient webClient = new WebClient();
 
         public Form1()
@@ -38,7 +33,7 @@ namespace Bike18InVK
             Properties.Settings.Default.passwordVk = tbVkPass.Text;
             Properties.Settings.Default.Save();
 
-            CookieContainer cookieNethouse = new CookieContainer();
+            CookieDictionary cookieNethouse = new CookieDictionary();
             cookieNethouse = nethouse.CookieNethouse(tbNethouseLogin.Text, tbNethousePass.Text);
 
             if (cookieNethouse.Count != 4)
@@ -58,7 +53,7 @@ namespace Bike18InVK
                 Settings = scope
             });
 
-            string otv = http.getRequest("https://bike18.ru/products/category/motobuksirovshchiki");
+            string otv = nethouse.getRequest("https://bike18.ru/products/category/motobuksirovshchiki");
             MatchCollection bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
             MatchCollection bike18Category = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
 
@@ -71,7 +66,7 @@ namespace Bike18InVK
                 foreach(Match s in bike18Category)
                 {
                     string categoryUrl = s.ToString();
-                    otv = http.getRequest("https://bike18.ru" + categoryUrl + "?page=all");
+                    otv = nethouse.getRequest("https://bike18.ru" + categoryUrl + "?page=all");
                     bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
 
                     UploadTovar(vk, cookieNethouse, bike18Tovar);
@@ -79,7 +74,7 @@ namespace Bike18InVK
             }            
         }
 
-        private void UploadTovar(VkApi vk, CookieContainer cookieNethouse, MatchCollection bike18Tovar)
+        private void UploadTovar(VkApi vk, CookieDictionary cookieNethouse, MatchCollection bike18Tovar)
         {
             foreach (Match str in bike18Tovar)
             {
