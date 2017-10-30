@@ -34,6 +34,13 @@ namespace Bike18InVK
             Properties.Settings.Default.passwordVk = tbVkPass.Text;
             Properties.Settings.Default.Save();
 
+            string urlCategory = tbUrlCategory.Text.Trim();
+            if(urlCategory == "")
+            {
+                MessageBox.Show("Проверьте правильность ссылки");
+                return;
+            }
+
             CookieDictionary cookieNethouse = new CookieDictionary();
             cookieNethouse = nethouse.CookieNethouse(tbNethouseLogin.Text, tbNethousePass.Text);
 
@@ -54,7 +61,7 @@ namespace Bike18InVK
                 Settings = scope
             });
 
-            string otv = nethouse.getRequest("https://bike18.ru/products/category/motobuksirovshchiki#");
+            string otv = nethouse.getRequest(urlCategory);
             MatchCollection bike18Tovar = new Regex("(?<=class=\"product-item__content\"><a href=\").*(?=\")").Matches(otv);
             MatchCollection bike18Category = new Regex("(?<=class=\"category-item__link\"><a href=\").*?(?=\">)").Matches(otv);
 
@@ -284,8 +291,8 @@ namespace Bike18InVK
             Properties.Settings.Default.passwordVk = tbVkPass.Text;
             Properties.Settings.Default.Save();
 
-            string strSearch = tbDeleteProduct.Text;
-            if(strSearch == "" || strSearch == " ")
+            string strSearch = tbDeleteProduct.Text.Trim();
+            if(strSearch == "")
             {
                 MessageBox.Show("Не заполнена строка поиска");
                 return;

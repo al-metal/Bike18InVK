@@ -37,6 +37,8 @@
             this.btnStart = new System.Windows.Forms.Button();
             this.tbDeleteProduct = new System.Windows.Forms.TextBox();
             this.btnDeleteProduct = new System.Windows.Forms.Button();
+            this.tbUrlCategory = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -95,7 +97,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(18, 120);
+            this.btnStart.Location = new System.Drawing.Point(18, 159);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(206, 23);
             this.btnStart.TabIndex = 6;
@@ -105,14 +107,14 @@
             // 
             // tbDeleteProduct
             // 
-            this.tbDeleteProduct.Location = new System.Drawing.Point(18, 149);
+            this.tbDeleteProduct.Location = new System.Drawing.Point(18, 188);
             this.tbDeleteProduct.Name = "tbDeleteProduct";
             this.tbDeleteProduct.Size = new System.Drawing.Size(206, 20);
             this.tbDeleteProduct.TabIndex = 7;
             // 
             // btnDeleteProduct
             // 
-            this.btnDeleteProduct.Location = new System.Drawing.Point(18, 175);
+            this.btnDeleteProduct.Location = new System.Drawing.Point(18, 214);
             this.btnDeleteProduct.Name = "btnDeleteProduct";
             this.btnDeleteProduct.Size = new System.Drawing.Size(206, 23);
             this.btnDeleteProduct.TabIndex = 8;
@@ -120,11 +122,29 @@
             this.btnDeleteProduct.UseVisualStyleBackColor = true;
             this.btnDeleteProduct.Click += new System.EventHandler(this.btnDeleteProduct_Click);
             // 
+            // tbUrlCategory
+            // 
+            this.tbUrlCategory.Location = new System.Drawing.Point(18, 133);
+            this.tbUrlCategory.Name = "tbUrlCategory";
+            this.tbUrlCategory.Size = new System.Drawing.Size(206, 20);
+            this.tbUrlCategory.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(15, 117);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(116, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Раздел для переноса";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(240, 261);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.tbUrlCategory);
             this.Controls.Add(this.btnDeleteProduct);
             this.Controls.Add(this.tbDeleteProduct);
             this.Controls.Add(this.btnStart);
@@ -153,6 +173,8 @@
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox tbDeleteProduct;
         private System.Windows.Forms.Button btnDeleteProduct;
+        private System.Windows.Forms.TextBox tbUrlCategory;
+        private System.Windows.Forms.Label label1;
     }
 }
 
