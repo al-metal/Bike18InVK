@@ -35,6 +35,8 @@
             this.tbVkLogin = new System.Windows.Forms.TextBox();
             this.tbVkPass = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
+            this.tbDeleteProduct = new System.Windows.Forms.TextBox();
+            this.btnDeleteProduct = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -101,11 +103,30 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
+            // tbDeleteProduct
+            // 
+            this.tbDeleteProduct.Location = new System.Drawing.Point(18, 149);
+            this.tbDeleteProduct.Name = "tbDeleteProduct";
+            this.tbDeleteProduct.Size = new System.Drawing.Size(206, 20);
+            this.tbDeleteProduct.TabIndex = 7;
+            // 
+            // btnDeleteProduct
+            // 
+            this.btnDeleteProduct.Location = new System.Drawing.Point(18, 175);
+            this.btnDeleteProduct.Name = "btnDeleteProduct";
+            this.btnDeleteProduct.Size = new System.Drawing.Size(206, 23);
+            this.btnDeleteProduct.TabIndex = 8;
+            this.btnDeleteProduct.Text = "Удалить товары";
+            this.btnDeleteProduct.UseVisualStyleBackColor = true;
+            this.btnDeleteProduct.Click += new System.EventHandler(this.btnDeleteProduct_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(240, 261);
+            this.Controls.Add(this.btnDeleteProduct);
+            this.Controls.Add(this.tbDeleteProduct);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -117,6 +138,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -129,6 +151,8 @@
         private System.Windows.Forms.TextBox tbVkLogin;
         private System.Windows.Forms.TextBox tbVkPass;
         private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.TextBox tbDeleteProduct;
+        private System.Windows.Forms.Button btnDeleteProduct;
     }
 }
 

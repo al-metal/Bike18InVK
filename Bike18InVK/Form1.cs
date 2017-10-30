@@ -19,6 +19,7 @@ namespace Bike18InVK
     {
         nethouse nethouse = new nethouse();
         WebClient webClient = new WebClient();
+        int countDeleteProduct;
 
         public Form1()
         {
@@ -57,13 +58,13 @@ namespace Bike18InVK
             MatchCollection bike18Tovar = new Regex("(?<=class=\"product-item__content\"><a href=\").*(?=\")").Matches(otv);
             MatchCollection bike18Category = new Regex("(?<=class=\"category-item__link\"><a href=\").*?(?=\">)").Matches(otv);
 
-            if(bike18Tovar.Count != 0)
+            if (bike18Tovar.Count != 0)
             {
                 UploadTovar(vk, cookieNethouse, bike18Tovar);
             }
             else
             {
-                foreach(Match s in bike18Category)
+                foreach (Match s in bike18Category)
                 {
                     string categoryUrl = s.ToString();
                     otv = nethouse.getRequest("https://bike18.ru" + categoryUrl + "?page=all");
@@ -71,7 +72,7 @@ namespace Bike18InVK
 
                     UploadTovar(vk, cookieNethouse, bike18Tovar);
                 }
-            }            
+            }
         }
 
         private void UploadTovar(VkApi vk, CookieDictionary cookieNethouse, MatchCollection bike18Tovar)
@@ -273,6 +274,60 @@ namespace Bike18InVK
                 }
                 i++;
             }
+        }
+
+        private void btnDeleteProduct_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.loginNethouse = tbNethouseLogin.Text;
+            Properties.Settings.Default.passwordNethouse = tbNethousePass.Text;
+            Properties.Settings.Default.loginVk = tbVkLogin.Text;
+            Properties.Settings.Default.passwordVk = tbVkPass.Text;
+            Properties.Settings.Default.Save();
+
+            string strSearch = tbDeleteProduct.Text;
+            if(strSearch == "" || strSearch == " ")
+            {
+                MessageBox.Show("Не заполнена строка поиска");
+                return;
+            }
+
+            countDeleteProduct = 0;
+
+            CookieDictionary cookieNethouse = new CookieDictionary();
+            cookieNethouse = nethouse.CookieNethouse(tbNethouseLogin.Text, tbNethousePass.Text);
+
+            if (cookieNethouse.Count != 4)
+            {
+                MessageBox.Show("Логин/пароль не верный");
+                return;
+            }
+
+            CookieContainer cookieVk = new CookieContainer();
+            var vk = new VkNet.VkApi();
+            var idVkProgram = 5464980;
+            Settings scope = Settings.All;
+            vk.Authorize(new VkNet.ApiAuthParams
+            {
+                ApplicationId = (ulong)idVkProgram,
+                Login = tbVkLogin.Text,
+                Password = tbVkPass.Text,
+                Settings = scope
+            });
+
+            var searchResult = vk.Markets.Search(new MarketSearchParams
+            {
+                OwnerId = -63895737,
+                Query = strSearch,
+                Count = 200
+            });
+
+            foreach(var product in searchResult)
+            {
+                vk.Markets.Delete(-63895737, product.Id);
+                countDeleteProduct++;
+            }
+
+            MessageBox.Show("Удалено " + countDeleteProduct + " товаров");
         }
     }
 }
