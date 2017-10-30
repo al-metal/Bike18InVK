@@ -10,8 +10,8 @@ using System.Windows.Forms;
 using VkNet.Enums.Filters;
 using VkNet.Model.RequestParams;
 using VkNet;
-using NehouseLibrary;
 using xNet.Net;
+using NehouseLibrary;
 
 namespace Bike18InVK
 {
@@ -53,9 +53,9 @@ namespace Bike18InVK
                 Settings = scope
             });
 
-            string otv = nethouse.getRequest("https://bike18.ru/products/category/motobuksirovshchiki");
-            MatchCollection bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
-            MatchCollection bike18Category = new Regex("(?<=<div class=\"category-capt-txt -text-center\"><a href=\").*?(?=\" class=\"blue\">)").Matches(otv);
+            string otv = nethouse.getRequest("https://bike18.ru/products/category/motobuksirovshchiki#");
+            MatchCollection bike18Tovar = new Regex("(?<=class=\"product-item__content\"><a href=\").*(?=\")").Matches(otv);
+            MatchCollection bike18Category = new Regex("(?<=class=\"category-item__link\"><a href=\").*?(?=\">)").Matches(otv);
 
             if(bike18Tovar.Count != 0)
             {
@@ -67,7 +67,7 @@ namespace Bike18InVK
                 {
                     string categoryUrl = s.ToString();
                     otv = nethouse.getRequest("https://bike18.ru" + categoryUrl + "?page=all");
-                    bike18Tovar = new Regex("(?<=<div class=\"product-link -text-center\"><a href=\").*(?=\" >)").Matches(otv);
+                    bike18Tovar = new Regex("(?<=class=\"product-item__content\"><a href=\").*(?=\")").Matches(otv);
 
                     UploadTovar(vk, cookieNethouse, bike18Tovar);
                 }
@@ -91,7 +91,7 @@ namespace Bike18InVK
                 articl = articl.Replace(" ", "").Replace("/", "");
                 string nameProduct = product[4].ToString();
 
-                SaveAllImages(product[44].ToString(), articl);
+                SaveAllImages(product[48].ToString(), articl);
                 int price = Convert.ToInt32(product[9].ToString());
 
                 AddInVK(vk, articl, nameProduct, description, price);
@@ -190,7 +190,7 @@ namespace Bike18InVK
 
             ///id подборки товара
             List<long> lon = new List<long>();
-            lon.Add(40);
+            lon.Add(41);
             IEnumerable<long> albums = (IEnumerable<long>)lon;
 
             var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
@@ -222,7 +222,7 @@ namespace Bike18InVK
                 {
 
                     if (url.Contains("siteapi"))
-                        url = "http:/" + url;
+                        url = "http://" + url;
                     else
                         url = "https://bike18.ru" + url;
                     webClient.DownloadFile(url, "pic\\test.jpg");
