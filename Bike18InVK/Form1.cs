@@ -20,6 +20,8 @@ namespace Bike18InVK
         nethouse nethouse = new nethouse();
         WebClient webClient = new WebClient();
         int countDeleteProduct;
+        int countAddProduct;
+        long idAlbom;
 
         public Form1()
         {
@@ -34,10 +36,26 @@ namespace Bike18InVK
             Properties.Settings.Default.passwordVk = tbVkPass.Text;
             Properties.Settings.Default.Save();
 
+            countAddProduct = 0;
+
             string urlCategory = tbUrlCategory.Text.Trim();
             if(urlCategory == "")
             {
                 MessageBox.Show("Проверьте правильность ссылки");
+                return;
+            }
+
+            string strIdAlbom = tbIdAlbom.Text.Trim();
+            if (strIdAlbom == "")
+            {
+                MessageBox.Show("Проверьте id альбома");
+                return;
+            }
+            idAlbom = Convert.ToInt32(strIdAlbom);
+
+            if(idAlbom == null || idAlbom == 0)
+            {
+                MessageBox.Show("Возникли проблемы с альбомом");
                 return;
             }
 
@@ -80,6 +98,8 @@ namespace Bike18InVK
                     UploadTovar(vk, cookieNethouse, bike18Tovar);
                 }
             }
+
+            MessageBox.Show("Добавлено " + countAddProduct + " товаров");
         }
 
         private void UploadTovar(VkApi vk, CookieDictionary cookieNethouse, MatchCollection bike18Tovar)
@@ -88,10 +108,6 @@ namespace Bike18InVK
             {
                 string urlBike18Tovar = str.ToString();
                 string articl = "";
-
-                //if (urlBike18Tovar != "https://bike18.ru/products/kvadrocikl-detskiy-fusim-dragon-50-krasnyy")
-                //    continue;
-                //continue;
 
                 List<string> product = nethouse.GetProductList(cookieNethouse, urlBike18Tovar);
                 string description = ReturnDescriptionProduct(product[7].ToString(), product[8].ToString(), urlBike18Tovar);
@@ -198,10 +214,11 @@ namespace Bike18InVK
 
             ///id подборки товара
             List<long> lon = new List<long>();
-            lon.Add(41);
+            lon.Add(idAlbom);
             IEnumerable<long> albums = (IEnumerable<long>)lon;
 
             var addToTovarInAlbum = vk.Markets.AddToAlbum(-63895737, tovar, albums);
+            countAddProduct++;
         }
 
         private void Form1_Load(object sender, EventArgs e)
